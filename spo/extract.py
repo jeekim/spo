@@ -18,7 +18,7 @@ def get_fired_trigger(sentence: str) -> Optional[str]:
     :return:
     """
     for trigger in config.triggers:
-        if sentence.find(trigger) != -1:
+        if re.search(r"\b" + re.escape(trigger) + r"\b", sentence):
             return trigger
     return None
 
@@ -92,16 +92,13 @@ def is_np_head(match, head) -> bool:
 
 def get_longest_np(chunks, head: str) -> str:
     longest_np = ''
-
     for i in range(len(chunks)):
         np = chunks[str(i)]['spanString']
         match = chunks[str(i)]['match']
         match = re.sub(r"\s+", " ", match, flags=re.UNICODE)
         match = match.strip()
-
         if is_np_head(match, head) and len(np) > len(longest_np):
             longest_np = np
-
     return longest_np
 
 
