@@ -23,8 +23,20 @@
 * nsubj <= NOUN => nmod => conj
 * coordinating conjunctions
 
+## What is Stanza?
+* Stanza is a python wrapper for Stanford CoreNLP and PyTorch NLP models.
+* tregex for chunking
+* neural pipelien for dependency parsing
+
+## Algorithm
+1. Given a sentence and a list of triggers,
+2. Check if a trigger is fired.
+3. If a trigger is fired, run a dependency parser and a chunker on the sentence.
+4. Using the dependency relations of the trigger, identify head words.
+5. Extract noun phrases by merging dependency relations and chunks based on the head words. 
+
 ## Usages
-* Setting up for
+* Setting up running SPO extractor
 ```bash
 export CORENLP_HOME=/path/model/
 export DATA_DIR=/path/data/
@@ -37,11 +49,10 @@ pip install -r requirements.txt
 
 * How to run a test?
 ```bash
-PYTHONPATH=. pytest -p no:warnings tests/test_SPOs.py
-PYTHONPATH=. pytest -p no:warnings tests/test_data_reader.py
+PYTHONPATH=. pytest tests/test_SPOs.py
 ```
 
 * How to extract SPO?
 ```bash
-PYTHONPATH=. python bin/run_spo.py
+PYTHONPATH=. python bin/run_spo.py -i input_directory -o output_file
 ```
