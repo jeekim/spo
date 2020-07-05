@@ -3,6 +3,13 @@ from typing import List, Optional
 import re
 
 
+def get_sentence(words):
+    s = []
+    for w in words:
+        s.append(w.text)
+    return " ".join(s)
+
+
 def get_dependencies(s) -> List:
     deps = []
     for dep_edge in s.dependencies:

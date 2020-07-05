@@ -1,6 +1,6 @@
 from spo.stanzanlp import StanzaNLP
 from spo.extract import get_dependencies, get_fired_trigger, get_trigger_dep, get_s_head, get_o_head, get_longest_np,\
-    extract_spo
+    extract_spo, get_sentence
 
 
 s1 = 'The encapsulation of rifampicin leads to a reduction of the Mycobacterium smegmatis inside macrophages.'
@@ -136,3 +136,25 @@ def test_s5_spo():
 def test_text():
     doc = nlp.process(text)
     assert 5 == len(doc.sentences)
+
+
+def extract_SPOs():
+    doc = nlp.process(text)
+    for sentence in list(doc.sentences):
+        sent = get_sentence(sentence.words)
+        trigger = get_fired_trigger(sent)
+
+        if not trigger:
+            continue
+
+        deps = get_dependencies(sentence)
+        # chunking
+        chunks = nlp.chunk(sent)
+        s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
+        row = [sent, s, p, o]
+        if all(row):
+            print('\t'.join(row))
+
+
+if __name__ == '__main__':
+    extract_SPOs()

@@ -2,14 +2,7 @@ import argparse
 import csv
 from spo.data_reader import DataReader
 from spo.stanzanlp import StanzaNLP
-from spo.extract import get_dependencies, get_fired_trigger, extract_spo
-
-
-def get_sentence(words):
-    s = []
-    for w in words:
-        s.append(w.text)
-    return " ".join(s)
+from spo.extract import get_dependencies, get_fired_trigger, get_sentence, extract_spo
 
 
 def main():
