@@ -1,4 +1,5 @@
 import glob
+# import spo.config as config
 from bs4 import BeautifulSoup as bs
 
 
@@ -6,11 +7,11 @@ class DataReader:
     """
 
     """
-    def __init__(self):
-        self.data_dir = '/Users/jee.hyub.kim/Projects/spo/data/*.nxml'
+    def __init__(self, data_dir):
+        self.data_dir = data_dir
 
     def get_reader(self):
-        files = glob.glob(self.data_dir)
+        files = glob.glob(f'{self.data_dir}/*.nxml')
         for file in files:
             with open(file, 'r') as f:
                 content = f.readlines()

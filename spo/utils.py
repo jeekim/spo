@@ -6,45 +6,68 @@ import re
 def get_dependencies(s) -> List:
     deps = []
     for dep_edge in s.dependencies:
+        # target text, source id, edge, source text
         deps.append((dep_edge[2].text, dep_edge[0].id, dep_edge[1], dep_edge[0].text))
     return deps
 
 
-def get_triggered(sentence: str) -> Optional[str]:
+def get_fired_trigger(sentence: str) -> Optional[str]:
+    """
+    Given a sentence, return a matched triggered, None if no firing.
+    :param sentence:
+    :return:
+    """
     for trigger in config.triggers:
-        # if sentence.find(trigger) != -1:
         if sentence.find(trigger) != -1:
-            return trigger # .split(" ")[0]
+            return trigger
     return None
 
 
-def get_trigger(deps: List, trigger: str):
-    for i, (text, id, edge, head) in enumerate(deps):
-        if trigger == text:
-            return i + 1, edge, head
+def get_trigger_dep(deps: List, trigger: str):
+    """
+    Given a trigger, fetch trigger info: trigger id, edge, source_text (possible head)
+    :param deps:
+    :param trigger:
+    :return:
+    """
+    for i, (target_text, source_id, deprel, source_text) in enumerate(deps):
+        if trigger == target_text:
+            return i + 1, deprel, source_text
     return None, None, None  # not matched.
 
 
-# TODO _acl:relcl
-def get_s_head(deps: List, pos: int, edge, source) -> str:
-    text = ''
-    if edge == "acl:relcl":
-        return source
-    for text, id, edge, head in deps:
-        if int(id) == pos and edge in config.s_dp_list:
-            return text
-    return text
+def get_s_head(deps: List, pos: int, edge, source_text) -> str:
+    """
+    Given dependencies and a trigger info, return a head word of a subject.
+    :param deps:
+    :param pos:
+    :param edge:
+    :param source_text:
+    :return:
+    """
+    if edge == "acl:relcl":  # when the trigger is a dependent
+        return source_text
+    # looking for a dependent of the trigger
+    for target_text, source_id, edge, _ in deps:
+        if int(source_id) == pos and edge in config.s_dp_list:
+            return target_text
+    return ''
 
 
-def get_o_head(deps: List, pos: int, edge, source) -> str:
-    text = ''
-    for text, id, edge, _ in deps:
-        if int(id) == pos and edge in config.o_dp_list:
-            return text
-    return text
+def get_o_head(deps: List, pos: int, edge, source_text) -> str:
+    for target_text, source_id, edge, _ in deps:
+        if int(source_id) == pos and edge in config.o_dp_list:
+            return target_text
+    return ''
 
 
 def is_np_head(match, head) -> bool:
+    """
+    Given a constituent and a head, check if the head is the head of the given chunk.
+    :param match:
+    :param head:
+    :return:
+    """
     if match.find(f'{head})) (PP (IN') != -1:
         return True
     #  TODO
@@ -66,9 +89,6 @@ def get_longest_np(chunks, head: str) -> str:
         match = chunks[str(i)]['match']
         match = re.sub(r"\s+", " ", match, flags=re.UNICODE)
         match = match.strip()
-        print(head)
-        print(np)
-        print(match)
 
         if is_np_head(match, head) and len(np) > len(longest_np):
             longest_np = np
@@ -78,7 +98,7 @@ def get_longest_np(chunks, head: str) -> str:
 
 def extract_spo(deps, chunks, trigger):
     trigger2 = trigger.split(" ")[0]
-    p, edge, source = get_trigger(deps, trigger2)
+    p, edge, source = get_trigger_dep(deps, trigger2)
     s_head = get_s_head(deps, p, edge, source)
     o_head = get_o_head(deps, p, edge, source)
     s_np = get_longest_np(chunks, s_head)

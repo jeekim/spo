@@ -1,13 +1,13 @@
 import argparse
-import os
 import csv
+import spo.config as config
 from spo.data_reader import DataReader
-from spo.nlp import TextProcessor
-from spo.utils import get_dependencies, get_triggered, extract_spo
+from spo.stanzanlp import StanzaNLP
+from spo.utils import get_dependencies, get_fired_trigger, extract_spo
 from stanza.server import CoreNLPClient
 
-os.environ['CORENLP_HOME'] = '/Users/jee.hyub.kim/Downloads/stanford-corenlp-4.0.0'
-client = CoreNLPClient(annotators=['tokenize', 'ssplit', 'pos', 'lemma', 'ner', 'parse', 'depparse', 'coref'],
+# client = CoreNLPClient(annotators=['tokenize', 'ssplit', 'pos', 'lemma', 'ner', 'parse', 'depparse', 'coref'],
+client = CoreNLPClient(annotators=['tokenize', 'ssplit', 'pos', 'lemma', 'parse', 'depparse'],
                        timeout=60000, memory='16G', endpoint='http://localhost:9001')
 
 
@@ -19,18 +19,28 @@ def get_sentence(words):
 
 
 def main():
-    dr = DataReader()
-    it = dr.get_reader()
-    nlp = TextProcessor()
+    """
 
-    with open('spos.tsv', 'w', newline='') as csvfile:
+    :return:
+    """
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('-i', '--input-dir', required=False, default=config.DATA_DIR, help='...')
+    parser.add_argument('-o', '--output-file', required=True, help='...')
+
+    args = parser.parse_args()
+
+    dr = DataReader(args.input_dir)
+    it = dr.get_reader()
+    nlp = StanzaNLP()
+
+    with open(args.output_file, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter='\t')
 
         for pmcid, title, abstract in list(it):
             doc = nlp.process(abstract)
             for sentence in list(doc.sentences):
                 sent = get_sentence(sentence.words)
-                trigger = get_triggered(sent)
+                trigger = get_fired_trigger(sent)
 
                 if not trigger:
                     continue
@@ -40,16 +50,17 @@ def main():
                 ann = client.tregex(sent, 'NP')
                 chunks = ann['sentences'][0]  # first sentence
                 s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
-                print("pmcid", pmcid)
-                print("sentence", sent)
-                print("s: ", s_head)
-                print("s: ", s)
-                print("p: ", p)
-                print("o: ", o_head)
-                print("o: ", o)
-
-                print("")
-                writer.writerow([pmcid, s_head, s, p, o_head, o, sent])
+                # print("pmcid", pmcid)
+                # print("sentence", sent)
+                # print("s: ", s_head)
+                # print("s: ", s)
+                # print("p: ", p)
+                # print("o: ", o_head)
+                # print("o: ", o)
+                # print("")
+                row = [pmcid, s, p, o, sent]
+                if all(row):
+                    writer.writerow(row)
 
 
 if __name__ == '__main__':

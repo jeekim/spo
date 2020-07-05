@@ -1,6 +1,6 @@
 import unittest
-from spo.nlp import TextProcessor
-from spo.utils import get_dependencies, get_triggered, get_trigger, get_s_head, get_o_head, get_longest_np, extract_spo
+from spo.stanzanlp import StanzaNLP
+from spo.utils import get_dependencies, get_fired_trigger, get_trigger_dep, get_s_head, get_o_head, get_longest_np, extract_spo
 
 s1 = 'The encapsulation of rifampicin leads to a reduction of the Mycobacterium smegmatis inside macrophages.'
 s2 = 'The Norwalk virus is the prototype virus that causes epidemic gastroenteritis infecting predominantly' \
@@ -54,23 +54,23 @@ text = s1 + ' ' + s2 + ' ' + s3 + ' ' + s4 + ' ' + s5
 #     ('.', '7', 'punct'),  # 18
 # ]
 
-nlp = TextProcessor()
+nlp = StanzaNLP()
 
 
 def test_triggered():
-    assert 'leads to' == get_triggered(s1)
-    assert 'causes' == get_triggered(s2)
-    assert 'cause' == get_triggered(s3)
-    assert 'inhibit' == get_triggered(s4)
-    assert 'cause of' == get_triggered(s5)
-    assert None is get_triggered(s6)
+    assert 'leads to' == get_fired_trigger(s1)
+    assert 'causes' == get_fired_trigger(s2)
+    assert 'cause' == get_fired_trigger(s3)
+    assert 'inhibit' == get_fired_trigger(s4)
+    assert 'cause of' == get_fired_trigger(s5)
+    assert None is get_fired_trigger(s6)
 
 
 def test_s1_trigger():
     ann = nlp.process(s1)
     sent = ann.sentences[0]
     deps = get_dependencies(sent)
-    pos, edge, head = get_trigger(deps, 'leads')
+    pos, edge, head = get_trigger_dep(deps, 'leads')
     assert 5 == pos
     assert 'root' == edge
     assert 'ROOT' == head
@@ -80,7 +80,7 @@ def test_s2_trigger():
     ann = nlp.process(s2)
     sent = ann.sentences[0]
     deps = get_dependencies(sent)
-    pos, edge, head = get_trigger(deps, 'causes')
+    pos, edge, head = get_trigger_dep(deps, 'causes')
     assert 9 == pos
     assert 'acl:relcl' == edge
     assert 'virus' == head
