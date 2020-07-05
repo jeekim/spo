@@ -47,6 +47,15 @@ def get_s_head(deps: List, pos: int, edge, source_text) -> str:
     """
     if edge == "acl:relcl":  # when the trigger is a dependent
         return source_text
+    elif edge == 'xcomp':
+        # print(source_text)
+        p, edge, source = get_trigger_dep(deps, source_text)
+        # recursive
+        s_head = get_s_head(deps, p, edge, source)
+        return s_head
+    else:
+        pass
+
     # looking for a dependent of the trigger
     for target_text, source_id, edge, _ in deps:
         if int(source_id) == pos and edge in config.s_dp_list:

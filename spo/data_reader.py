@@ -1,6 +1,6 @@
 import glob
-# import spo.config as config
 from bs4 import BeautifulSoup as bs
+from typing import Iterator
 
 
 class DataReader:
@@ -10,7 +10,11 @@ class DataReader:
     def __init__(self, data_dir):
         self.data_dir = data_dir
 
-    def get_reader(self):
+    def get_reader(self) -> Iterator:
+        """
+        PMC article generator for SPO extraction
+        :return:
+        """
         files = glob.glob(f'{self.data_dir}/*.nxml')
         for file in files:
             with open(file, 'r') as f:

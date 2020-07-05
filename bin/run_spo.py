@@ -1,14 +1,8 @@
 import argparse
 import csv
-import spo.config as config
 from spo.data_reader import DataReader
 from spo.stanzanlp import StanzaNLP
-from spo.utils import get_dependencies, get_fired_trigger, extract_spo
-from stanza.server import CoreNLPClient
-
-# client = CoreNLPClient(annotators=['tokenize', 'ssplit', 'pos', 'lemma', 'ner', 'parse', 'depparse', 'coref'],
-client = CoreNLPClient(annotators=['tokenize', 'ssplit', 'pos', 'lemma', 'parse', 'depparse'],
-                       timeout=60000, memory='16G', endpoint='http://localhost:9001')
+from spo.extract import get_dependencies, get_fired_trigger, extract_spo
 
 
 def get_sentence(words):
@@ -24,7 +18,7 @@ def main():
     :return:
     """
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('-i', '--input-dir', required=False, default=config.DATA_DIR, help='...')
+    parser.add_argument('-i', '--input-dir', required=True, help='...')
     parser.add_argument('-o', '--output-file', required=True, help='...')
 
     args = parser.parse_args()
@@ -47,18 +41,9 @@ def main():
 
                 deps = get_dependencies(sentence)
                 # chunking
-                ann = client.tregex(sent, 'NP')
-                chunks = ann['sentences'][0]  # first sentence
+                chunks = nlp.chunk(sent)
                 s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
-                # print("pmcid", pmcid)
-                # print("sentence", sent)
-                # print("s: ", s_head)
-                # print("s: ", s)
-                # print("p: ", p)
-                # print("o: ", o_head)
-                # print("o: ", o)
-                # print("")
-                row = [pmcid, s, p, o, sent]
+                row = [title, pmcid, f'PMC{pmcid}.nxml', s, p, o, sent]
                 if all(row):
                     writer.writerow(row)
 

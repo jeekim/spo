@@ -1,6 +1,7 @@
-import unittest
 from spo.stanzanlp import StanzaNLP
-from spo.utils import get_dependencies, get_fired_trigger, get_trigger_dep, get_s_head, get_o_head, get_longest_np, extract_spo
+from spo.extract import get_dependencies, get_fired_trigger, get_trigger_dep, get_s_head, get_o_head, get_longest_np,\
+    extract_spo
+
 
 s1 = 'The encapsulation of rifampicin leads to a reduction of the Mycobacterium smegmatis inside macrophages.'
 s2 = 'The Norwalk virus is the prototype virus that causes epidemic gastroenteritis infecting predominantly' \
@@ -14,50 +15,18 @@ s5 = 'Chronic hepatitis virus infection is a major cause of chronic hepatitis, c
 s6 = 'This must not be triggered.'
 text = s1 + ' ' + s2 + ' ' + s3 + ' ' + s4 + ' ' + s5
 
-# s1_dg = [
-#     ('The', '2', 'det'),
-#     ('encapsulation', '5', 'nsubj'),
-#     ('of', '4', 'case'),
-#     ('rifampicin', '2', 'nmod'),
-#     ('leads', '0', 'root'),
-#     ('to', '8', 'case'),
-#     ('a', '8', 'det'),
-#     ('reduction', '5', 'obl'),
-#     ('of', '12', 'case'),
-#     ('the', '12', 'det'),
-#     ('Mycobacterium', '12', 'compound'),
-#     ('smegmatis', '8', 'nmod'),
-#     ('inside', '14', 'case'),
-#     ('macrophages', '12', 'nmod'),
-#     ('.', '5', 'punct'),
-# ]
-
-# s2_dg = [
-#     # text, source, edge
-#     ('The', '3', 'det'),  # 1
-#     ('Norwalk', '3', 'compound'),  # 2
-#     ('virus', '7', 'nsubj'),  # 3
-#     ('is', '7', 'cop'),  # 4
-#     ('the', '7', 'det'),  # 5
-#     ('prototype', '7', 'compound'),  # 6
-#     ('virus', '0', 'root'),  # 7
-#     ('that', '9', 'nsubj'),  # 8
-#     ('causes', '7', 'acl:relcl'),  # 9
-#     ('epidemic', '11', 'compound'),  # 10
-#     ('gastroenteritis', '9', 'obj'),  # 11
-#     ('infecting', '9', 'advcl'),  # 12
-#     ('predominantly', '14', 'advmod'),  # 13
-#     ('older', '15', 'amod'),  # 14
-#     ('children', '12', 'obj'),  # 15
-#     ('and', '17', 'cc'),  # 16
-#     ('adults', '15', 'conj'),  # 17
-#     ('.', '7', 'punct'),  # 18
-# ]
 
 nlp = StanzaNLP()
 
 
-def test_triggered():
+def prepare_deps(s):
+    ann = nlp.process(s)
+    sent = ann.sentences[0]
+    deps = get_dependencies(sent)
+    return deps
+
+
+def test_fired_triggers():
     assert 'leads to' == get_fired_trigger(s1)
     assert 'causes' == get_fired_trigger(s2)
     assert 'cause' == get_fired_trigger(s3)
@@ -67,9 +36,7 @@ def test_triggered():
 
 
 def test_s1_trigger():
-    ann = nlp.process(s1)
-    sent = ann.sentences[0]
-    deps = get_dependencies(sent)
+    deps = prepare_deps(s1)
     pos, edge, head = get_trigger_dep(deps, 'leads')
     assert 5 == pos
     assert 'root' == edge
@@ -77,9 +44,7 @@ def test_s1_trigger():
 
 
 def test_s2_trigger():
-    ann = nlp.process(s2)
-    sent = ann.sentences[0]
-    deps = get_dependencies(sent)
+    deps = prepare_deps(s2)
     pos, edge, head = get_trigger_dep(deps, 'causes')
     assert 9 == pos
     assert 'acl:relcl' == edge
@@ -87,16 +52,12 @@ def test_s2_trigger():
 
 
 def test_s1_s_head():
-    ann = nlp.process(s1)
-    sent = ann.sentences[0]
-    deps = get_dependencies(sent)
+    deps = prepare_deps(s1)
     assert 'encapsulation' == get_s_head(deps, 5, 'root', 'ROOT')
 
 
 def test_s1_o_head():
-    ann = nlp.process(s1)
-    sent = ann.sentences[0]
-    deps = get_dependencies(sent)
+    deps = prepare_deps(s1)
     assert 'reduction' == get_o_head(deps, 5, 'root', 'ROOT')
 
 
@@ -111,17 +72,8 @@ def test_s1_np():
     assert 'a reduction of the Mycobacterium smegmatis inside macrophages' == get_longest_np(chunks, 'reduction')
 
 
-# def test_s1_dg():
-#     doc = nlp.process(s1)
-#     s = doc.sentences[0]
-#     dg = get_dependencies(s)
-#     assert s1_dg == dg
-
-
 def test_s1_spo():
-    doc = nlp.process(s1)
-    sent = doc.sentences[0]
-    deps = get_dependencies(sent)
+    deps = prepare_deps(s1)
     chunks = nlp.chunk(s1)
     trigger = 'leads to'
     s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
@@ -133,11 +85,8 @@ def test_s1_spo():
 
 
 def test_s2_spo():
-    doc = nlp.process(s2)
-    sent = doc.sentences[0]
-    deps = get_dependencies(sent)
+    deps = prepare_deps(s2)
     chunks = nlp.chunk(s2)
-    print(chunks)
     trigger = 'causes'
     s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
     assert s_head == 'virus'
@@ -148,9 +97,7 @@ def test_s2_spo():
 
 
 def test_s3_spo():
-    doc = nlp.process(s3)
-    sent = doc.sentences[0]
-    deps = get_dependencies(sent)
+    deps = prepare_deps(s3)
     chunks = nlp.chunk(s3)
     print(chunks)
     trigger = 'cause'
@@ -163,26 +110,20 @@ def test_s3_spo():
 
 
 def test_s4_spo():
-    doc = nlp.process(s4)
-    sent = doc.sentences[0]
-    deps = get_dependencies(sent)
+    deps = prepare_deps(s4)
     chunks = nlp.chunk(s4)
-    print(chunks)
     trigger = 'inhibit'
     s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
-    # assert s_head == 'exposure'
-    # assert s == 'The encapsulation of rifampicin'
+    assert s_head == 'ribavirin'
+    assert s == 'ribavirin'
     assert p == 'inhibit'
     assert o_head == 'replication'
     assert o == 'SARS coronavirus replication in five different cell types of animal or human origin'
 
 
 def test_s5_spo():
-    doc = nlp.process(s5)
-    sent = doc.sentences[0]
-    deps = get_dependencies(sent)
+    deps = prepare_deps(s5)
     chunks = nlp.chunk(s5)
-    print(chunks)
     trigger = 'cause of'
     s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
     assert s_head == 'infection'
@@ -192,7 +133,6 @@ def test_s5_spo():
     assert o == 'chronic hepatitis, cirrhosis, and hepatocellular carcinoma worldwide'
 
 
-# @unittest.expectedFailure
 def test_text():
     doc = nlp.process(text)
     assert 5 == len(doc.sentences)

@@ -1,6 +1,7 @@
 from spo.data_reader import DataReader
+import os
 
-dr = DataReader()
+dr = DataReader(os.environ['DATA_DIR'])
 it = dr.get_reader()
 
 
