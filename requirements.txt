@@ -1,0 +1,4 @@
+pytest
+stanza
+bs4
+lxml
