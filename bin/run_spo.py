@@ -2,7 +2,7 @@ import argparse
 import csv
 from spo.data_reader import DataReader
 from spo.stanzanlp import StanzaNLP
-from spo.extract import get_dependencies, get_fired_trigger, get_sentence, extract_spo
+from spo.extract import get_dependencies, get_fired_trigger, get_sentence, extract_spo, get_coordinated_nps
 
 
 def main():
@@ -36,9 +36,14 @@ def main():
                 # chunking
                 chunks = nlp.chunk(sent)
                 s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
-                row = [title, pmcid, f'PMC{pmcid}.nxml', s, p, o, sent]
-                if all(row):
-                    writer.writerow(row)
+                ss = get_coordinated_nps(s)
+                os = get_coordinated_nps(o)
+
+                for s in ss:
+                    for o in os:
+                        row = [title, pmcid, f'PMC{pmcid}.nxml', s, p, o, sent]
+                        if all(row):
+                            writer.writerow(row)
 
 
 if __name__ == '__main__':

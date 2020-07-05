@@ -1,6 +1,6 @@
 from spo.stanzanlp import StanzaNLP
 from spo.extract import get_dependencies, get_fired_trigger, get_trigger_dep, get_s_head, get_o_head, get_longest_np,\
-    extract_spo, get_sentence
+    extract_spo, get_sentence, get_coordinated_nps
 
 
 s1 = 'The encapsulation of rifampicin leads to a reduction of the Mycobacterium smegmatis inside macrophages.'
@@ -133,6 +133,14 @@ def test_s5_spo():
     assert o == 'chronic hepatitis, cirrhosis, and hepatocellular carcinoma worldwide'
 
 
+def test_coordinating_conjunction():
+    nps = get_coordinated_nps('chronic hepatitis, cirrhosis, and hepatocellular carcinoma worldwide')
+    assert 3 == len(nps)
+    assert nps[0] == 'chronic hepatitis'
+    assert nps[1] == 'cirrhosis'
+    assert nps[2] == 'hepatocellular carcinoma worldwide'
+
+
 def test_text():
     doc = nlp.process(text)
     assert 5 == len(doc.sentences)
@@ -151,9 +159,14 @@ def extract_SPOs():
         # chunking
         chunks = nlp.chunk(sent)
         s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
-        row = [sent, s, p, o]
-        if all(row):
-            print('\t'.join(row))
+        ss = get_coordinated_nps(s)
+        os = get_coordinated_nps(o)
+
+        for s in ss:
+            for o in os:
+                row = [sent, s, p, o]
+                if all(row):
+                    print('\t'.join(row))
 
 
 if __name__ == '__main__':

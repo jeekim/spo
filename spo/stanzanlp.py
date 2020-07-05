@@ -10,8 +10,8 @@ class StanzaNLP(NLP):
     # stanza.download('en')  # download English model
     def __init__(self):
         self.nlp = stanza.Pipeline('en')  # initialize English neural pipeline
-        self.client = CoreNLPClient(annotators=['tokenize', 'ssplit', 'pos', 'lemma', 'parse', 'depparse'],
-                                    timeout=60000, memory='16G', endpoint='http://localhost:9001')
+        self.client = CoreNLPClient(annotators=['tokenize', 'ssplit', 'pos', 'lemma', 'parse'],
+                                    timeout=60000, memory='4G', endpoint='http://localhost:9001')
 
     def process(self, doc: str):
         doc = self.nlp(doc)  # run annotation over a sentence

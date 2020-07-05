@@ -109,6 +109,12 @@ def get_longest_np(chunks, head: str) -> str:
     return longest_np
 
 
+def get_coordinated_nps(chunk: str) -> List[str]:
+    nps = re.split(r"\s*(?:,|but|and)\s+", chunk)
+    nps = list(filter(lambda e: len(e) > 0, nps))
+    return nps
+
+
 def extract_spo(deps, chunks, trigger):
     trigger2 = trigger.split(" ")[0]
     p, edge, source = get_trigger_dep(deps, trigger2)
@@ -117,3 +123,4 @@ def extract_spo(deps, chunks, trigger):
     s_np = get_longest_np(chunks, s_head)
     o_np = get_longest_np(chunks, o_head)
     return s_head, s_np, trigger, o_head, o_np
+

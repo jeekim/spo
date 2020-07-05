@@ -3,20 +3,25 @@
 ## Example sentences and universal dependencies
 
 ![image info](./image/sentence1.png)
-* nsubj VERB obl
+* The encapsulation of rifampicin leads to a reduction of the Mycobacterium smegmatis inside macrophages.
+* nsubj (nominal subject) <= VERB => obl (oblique nominal)
 
 ![image info](./image/sentence2.png)
-* _acl:relcl VERB obj
+* The Norwalk virus is the prototype virus that causes epidemic gastroenteritis infecting predominantly older children and adults.
+* acl:relcl (adjectival clause) => VERB => obj (object)
 
 ![image info](./image/sentence3.png)
-* nsubj VERB obj
+* It is widely agreed that the exposure to ambient air pollution may cause serious respiratory illnesses and that weather conditions may also contribute to the seriousness.
+* nsubj <= VERB => obj
 
 ![image info](./image/sentence4.png)
-* nsubj:pass _xcomp VERB obj
+* In this report, ribavirin was shown to inhibit SARS coronavirus replication in five different cell types of animal or human origin at therapeutically achievable concentrations.
+* nsubj:pass <= xcomp => VERB => obj
 
 ![image info](./image/sentence5.png)
-* nsubj NOUN nmod
-* NOUN nmod conj
+* Chronic hepatitis virus infection is a major cause of chronic hepatitis, cirrhosis, and hepatocellular carcinoma worldwide.
+* nsubj <= NOUN => nmod => conj
+* coordinating conjunctions
 
 ## Usages
 * Setting up for
