@@ -2,6 +2,8 @@ import stanza
 from stanza.server import CoreNLPClient
 from spo.nlp import NLP
 
+stanza.download('en')
+
 
 class StanzaNLP(NLP):
     """
