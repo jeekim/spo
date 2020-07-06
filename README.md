@@ -74,3 +74,7 @@ PYTHONPATH=. python tests/test_SPOs.py
 ```bash
 PYTHONPATH=. python bin/run_spo.py -i input_directory -o output_file
 ```
+
+## What is missing?
+
+* Biomedical Named Entity Recognisers can be used to improve NP chunking and to identify the roles on NPs.
