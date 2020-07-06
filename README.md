@@ -37,8 +37,6 @@
 
 ## Usages
 
-* Downloading CoreNLP library and English model.
-
 * Download [Stanford CoreNLP](http://nlp.stanford.edu/software/stanford-corenlp-latest.zip) and [an English models](http://nlp.stanford.edu/software/stanford-corenlp-4.0.0-models-english.jar) for the language you wish to use
 * Put the model jars in the distribution folder
 
@@ -53,8 +51,14 @@ export DATA_DIR=/path/to/data/
 pip install -r requirements.txt
 ```
 
-* How to run a test?
+* Download a model for a neural dependency parser
 ```bash
+python -c 'import stanza; stanza.download("en")'
+```
+
+* How to run tests?
+```bash
+cd /path/to/project-directory
 PYTHONPATH=. pytest tests/test_SPOs.py
 
 export DATA_DIR="$(pwd)/data/tests"
