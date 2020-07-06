@@ -65,6 +65,11 @@ export DATA_DIR="$(pwd)/data/tests"
 PYTHONPATH=. pytest tests/test_data_reader.py
 ```
 
+* How to get SPOs for example sentences
+```bash
+PYTHONPATH=. python tests/test_SPOs.py
+```
+
 * How to extract SPO?
 ```bash
 PYTHONPATH=. python bin/run_spo.py -i input_directory -o output_file
