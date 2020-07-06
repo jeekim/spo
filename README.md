@@ -36,10 +36,16 @@
 5. Extract noun phrases by merging dependency relations and chunks based on the head words. 
 
 ## Usages
-* Setting up running SPO extractor
+
+* Downloading CoreNLP library and English model.
+
+* Download [Stanford CoreNLP](http://nlp.stanford.edu/software/stanford-corenlp-latest.zip) and [an English models](http://nlp.stanford.edu/software/stanford-corenlp-4.0.0-models-english.jar) for the language you wish to use
+* Put the model jars in the distribution folder
+
+* Setting up environment variables
 ```bash
-export CORENLP_HOME=/path/model/
-export DATA_DIR=/path/data/
+export CORENLP_HOME=/path/to/stanford-corenlp-full-2020-04-20
+export DATA_DIR=/path/to/data/
 ```
 
 * How to install dependencies?
@@ -50,6 +56,9 @@ pip install -r requirements.txt
 * How to run a test?
 ```bash
 PYTHONPATH=. pytest tests/test_SPOs.py
+
+export DATA_DIR="$(pwd)/data/tests"
+PYTHONPATH=. pytest tests/test_data_reader.py
 ```
 
 * How to extract SPO?
