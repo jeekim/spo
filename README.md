@@ -1,4 +1,4 @@
-# SPO extractor
+# SPO extractor using Stanza
 
 ## Example sentences and universal dependencies
 
