@@ -37,7 +37,7 @@
 
 ## Usages
 
-* Download [Stanford CoreNLP](http://nlp.stanford.edu/software/stanford-corenlp-latest.zip) and [an English models](http://nlp.stanford.edu/software/stanford-corenlp-4.0.0-models-english.jar) for the language you wish to use
+* Download [Stanford CoreNLP](http://nlp.stanford.edu/software/stanford-corenlp-latest.zip) and [an English models](http://nlp.stanford.edu/software/stanford-corenlp-4.0.0-models-english.jar)
 * Put the model jars in the distribution folder
 
 * Setting up environment variables
