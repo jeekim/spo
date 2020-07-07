@@ -25,7 +25,7 @@
 
 ## What is Stanza?
 * Stanza is a python wrapper for Stanford CoreNLP and PyTorch NLP models.
-* tregex for chunking
+* [tregex](https://nlp.stanford.edu/software/tregex.html) for chunking
 * neural pipelien for dependency parsing
 
 ## Algorithm
