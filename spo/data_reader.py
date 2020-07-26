@@ -10,7 +10,7 @@ class DataReader:
     def __init__(self, data_dir):
         self.data_dir = data_dir
 
-    def get_reader(self) -> Iterator:
+    def __iter__(self) -> Iterator:
         """
         PMC article generator for SPO extraction
         :return:
