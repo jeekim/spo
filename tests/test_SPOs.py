@@ -1,6 +1,5 @@
-from spo.stanzanlp import StanzaNLP
 from spo.extract import get_dependencies, get_fired_trigger, get_trigger_dep, get_s_head, get_o_head, get_longest_np,\
-    extract_spo, get_sentence, get_coordinated_nps
+    extract_spo, get_sentence, get_coordinated_nps, prepare_deps, extract_SPOs, prepare_chunks
 
 
 s1 = 'The encapsulation of rifampicin leads to a reduction of the Mycobacterium smegmatis inside macrophages.'
@@ -14,16 +13,6 @@ s5 = 'Chronic hepatitis virus infection is a major cause of chronic hepatitis, c
     ' carcinoma worldwide.'
 s6 = 'This must not be triggered.'
 text = s1 + ' ' + s2 + ' ' + s3 + ' ' + s4 + ' ' + s5
-
-
-nlp = StanzaNLP()
-
-
-def prepare_deps(s):
-    ann = nlp.process(s)
-    sent = ann.sentences[0]
-    deps = get_dependencies(sent)
-    return deps
 
 
 def test_fired_triggers():
@@ -62,19 +51,22 @@ def test_s1_o_head():
 
 
 def test_s1_chunks():
-    chunks = nlp.chunk(s1)
+    chunks = prepare_chunks(s1)
+    # chunks = nlp.chunk(s1)
     assert 'The encapsulation of rifampicin' == chunks['0']['spanString']
 
 
 def test_s1_np():
-    chunks = nlp.chunk(s1)
+    # chunks = nlp.chunk(s1)
+    chunks = prepare_chunks(s1)
     assert 'The encapsulation of rifampicin' == get_longest_np(chunks, 'encapsulation')
     assert 'a reduction of the Mycobacterium smegmatis inside macrophages' == get_longest_np(chunks, 'reduction')
 
 
 def test_s1_spo():
     deps = prepare_deps(s1)
-    chunks = nlp.chunk(s1)
+    chunks = prepare_chunks(s1)
+    # chunks = nlp.chunk(s1)
     trigger = 'leads to'
     s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
     assert s_head == 'encapsulation'
@@ -86,7 +78,8 @@ def test_s1_spo():
 
 def test_s2_spo():
     deps = prepare_deps(s2)
-    chunks = nlp.chunk(s2)
+    chunks = prepare_chunks(s2)
+    # chunks = nlp.chunk(s2)
     trigger = 'causes'
     s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
     assert s_head == 'virus'
@@ -98,7 +91,8 @@ def test_s2_spo():
 
 def test_s3_spo():
     deps = prepare_deps(s3)
-    chunks = nlp.chunk(s3)
+    chunks = prepare_chunks(s3)
+    # chunks = nlp.chunk(s3)
     print(chunks)
     trigger = 'cause'
     s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
@@ -111,7 +105,7 @@ def test_s3_spo():
 
 def test_s4_spo():
     deps = prepare_deps(s4)
-    chunks = nlp.chunk(s4)
+    chunks = prepare_chunks(s4)
     trigger = 'inhibit'
     s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
     assert s_head == 'ribavirin'
@@ -123,7 +117,7 @@ def test_s4_spo():
 
 def test_s5_spo():
     deps = prepare_deps(s5)
-    chunks = nlp.chunk(s5)
+    chunks = prepare_chunks(s5)
     trigger = 'cause of'
     s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
     assert s_head == 'infection'
@@ -141,33 +135,10 @@ def test_coordinating_conjunction():
     assert nps[2] == 'hepatocellular carcinoma worldwide'
 
 
-def test_text():
-    doc = nlp.process(text)
-    assert 5 == len(doc.sentences)
-
-
-def extract_SPOs():
-    doc = nlp.process(text)
-    for sentence in list(doc.sentences):
-        sent = get_sentence(sentence.words)
-        trigger = get_fired_trigger(sent)
-
-        if not trigger:
-            continue
-
-        deps = get_dependencies(sentence)
-        # chunking
-        chunks = nlp.chunk(sent)
-        s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
-        ss = get_coordinated_nps(s)
-        os = get_coordinated_nps(o)
-
-        for s in ss:
-            for o in os:
-                row = [sent, s, p, o]
-                if all(row):
-                    print('\t'.join(row))
+#def test_text():
+#    doc = nlp.process(text)
+#    assert 5 == len(doc.sentences)
 
 
 if __name__ == '__main__':
-    extract_SPOs()
+    extract_SPOs(text)

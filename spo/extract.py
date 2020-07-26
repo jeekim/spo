@@ -1,6 +1,19 @@
 import spo.config as config
+from spo.stanzanlp import StanzaNLP
 from typing import List, Optional
 import re
+
+nlp = StanzaNLP()
+
+def prepare_chunks(s: str):
+    return nlp.chunk(s)
+
+
+def prepare_deps(s: str):
+    ann = nlp.process(s)
+    sent = ann.sentences[0]
+    deps = get_dependencies(sent)
+    return deps
 
 
 def get_sentence(words):
@@ -123,4 +136,27 @@ def extract_spo(deps, chunks, trigger):
     s_np = get_longest_np(chunks, s_head)
     o_np = get_longest_np(chunks, o_head)
     return s_head, s_np, trigger, o_head, o_np
+
+
+def extract_SPOs(text: str):
+      doc = nlp.process(text)
+      for sentence in list(doc.sentences):
+          sent = get_sentence(sentence.words)
+          trigger = get_fired_trigger(sent)
+
+          if not trigger:
+              continue
+
+          deps = get_dependencies(sentence)
+          # chunking
+          chunks = nlp.chunk(sent)
+          s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
+          ss = get_coordinated_nps(s)
+          os = get_coordinated_nps(o)
+
+          for s in ss:
+              for o in os:
+                  row = [sent, s, p, o]
+                  if all(row):
+                      print('\t'.join(row))
 
