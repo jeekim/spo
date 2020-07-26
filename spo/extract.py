@@ -4,15 +4,6 @@ from typing import List, Optional
 import re
 
 
-
-
-def get_sentence(words):
-    s = []
-    for w in words:
-        s.append(w.text)
-    return " ".join(s)
-
-
 def get_fired_trigger(sentence: str) -> Optional[str]:
     """
     Given a sentence, return a matched triggered, None if no firing.

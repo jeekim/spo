@@ -55,3 +55,10 @@ class StanzaNLP(NLP):
             deps.append((dep_edge[2].text, dep_edge[0].id, dep_edge[1], dep_edge[0].text))
         return deps
 
+    @staticmethod
+    def get_sentence(words) -> str:
+        s = []
+        for w in words:
+            s.append(w.text)
+        return " ".join(s)
+

@@ -2,7 +2,7 @@ import argparse
 import csv
 from spo.data_reader import DataReader
 from spo.stanzanlp import StanzaNLP
-from spo.extract import get_fired_trigger, get_sentence, extract_spo, get_coordinated_nps
+from spo.extract import get_fired_trigger, extract_spo, get_coordinated_nps
 
 
 def main():
@@ -26,7 +26,7 @@ def main():
         for pmcid, title, abstract in list(it):
             doc = nlp.process(abstract)
             for sentence in list(doc.sentences):
-                sent = get_sentence(sentence.words)
+                sent = StanzaNLP.get_sentence(sentence.words)
                 trigger = get_fired_trigger(sent)
 
                 if not trigger:
