@@ -3,17 +3,7 @@ from spo.stanzanlp import StanzaNLP
 from typing import List, Optional
 import re
 
-nlp = StanzaNLP()
 
-def prepare_chunks(s: str):
-    return nlp.chunk(s)
-
-
-def prepare_deps(s: str):
-    ann = nlp.process(s)
-    sent = ann.sentences[0]
-    deps = get_dependencies(sent)
-    return deps
 
 
 def get_sentence(words):
@@ -21,14 +11,6 @@ def get_sentence(words):
     for w in words:
         s.append(w.text)
     return " ".join(s)
-
-
-def get_dependencies(s) -> List:
-    deps = []
-    for dep_edge in s.dependencies:
-        # target text, source id, edge, source text
-        deps.append((dep_edge[2].text, dep_edge[0].id, dep_edge[1], dep_edge[0].text))
-    return deps
 
 
 def get_fired_trigger(sentence: str) -> Optional[str]:
@@ -138,25 +120,25 @@ def extract_spo(deps, chunks, trigger):
     return s_head, s_np, trigger, o_head, o_np
 
 
-def extract_SPOs(text: str):
-      doc = nlp.process(text)
-      for sentence in list(doc.sentences):
-          sent = get_sentence(sentence.words)
-          trigger = get_fired_trigger(sent)
-
-          if not trigger:
-              continue
-
-          deps = get_dependencies(sentence)
-          # chunking
-          chunks = nlp.chunk(sent)
-          s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
-          ss = get_coordinated_nps(s)
-          os = get_coordinated_nps(o)
-
-          for s in ss:
-              for o in os:
-                  row = [sent, s, p, o]
-                  if all(row):
-                      print('\t'.join(row))
-
+#def extract_SPOs(text: str):
+#      doc = nlp.process(text)
+#      for sentence in list(doc.sentences):
+#          sent = get_sentence(sentence.words)
+#          trigger = get_fired_trigger(sent)
+#
+#          if not trigger:
+#              continue
+#
+#          deps = get_dependencies(sentence)
+#          # chunking
+#          chunks = nlp.chunk(sent)
+#          s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
+#          ss = get_coordinated_nps(s)
+#          os = get_coordinated_nps(o)
+#
+#          for s in ss:
+#              for o in os:
+#                  row = [sent, s, p, o]
+#                  if all(row):
+#                      print('\t'.join(row))
+#

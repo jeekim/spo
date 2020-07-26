@@ -1,6 +1,8 @@
-from spo.extract import get_dependencies, get_fired_trigger, get_trigger_dep, get_s_head, get_o_head, get_longest_np,\
-    extract_spo, get_sentence, get_coordinated_nps, prepare_deps, extract_SPOs, prepare_chunks
+from spo.extract import get_fired_trigger, get_trigger_dep, get_s_head, get_o_head, get_longest_np,\
+    extract_spo, get_sentence, get_coordinated_nps
+from spo.stanzanlp import StanzaNLP 
 
+nlp = StanzaNLP()
 
 s1 = 'The encapsulation of rifampicin leads to a reduction of the Mycobacterium smegmatis inside macrophages.'
 s2 = 'The Norwalk virus is the prototype virus that causes epidemic gastroenteritis infecting predominantly' \
@@ -25,7 +27,7 @@ def test_fired_triggers():
 
 
 def test_s1_trigger():
-    deps = prepare_deps(s1)
+    deps = nlp.prepare_deps(s1)
     pos, edge, head = get_trigger_dep(deps, 'leads')
     assert 5 == pos
     assert 'root' == edge
@@ -33,7 +35,7 @@ def test_s1_trigger():
 
 
 def test_s2_trigger():
-    deps = prepare_deps(s2)
+    deps = nlp.prepare_deps(s2)
     pos, edge, head = get_trigger_dep(deps, 'causes')
     assert 9 == pos
     assert 'acl:relcl' == edge
@@ -41,32 +43,29 @@ def test_s2_trigger():
 
 
 def test_s1_s_head():
-    deps = prepare_deps(s1)
+    deps = nlp. prepare_deps(s1)
     assert 'encapsulation' == get_s_head(deps, 5, 'root', 'ROOT')
 
 
 def test_s1_o_head():
-    deps = prepare_deps(s1)
+    deps = nlp.prepare_deps(s1)
     assert 'reduction' == get_o_head(deps, 5, 'root', 'ROOT')
 
 
 def test_s1_chunks():
-    chunks = prepare_chunks(s1)
-    # chunks = nlp.chunk(s1)
+    chunks = nlp.prepare_chunks(s1)
     assert 'The encapsulation of rifampicin' == chunks['0']['spanString']
 
 
 def test_s1_np():
-    # chunks = nlp.chunk(s1)
-    chunks = prepare_chunks(s1)
+    chunks = nlp.prepare_chunks(s1)
     assert 'The encapsulation of rifampicin' == get_longest_np(chunks, 'encapsulation')
     assert 'a reduction of the Mycobacterium smegmatis inside macrophages' == get_longest_np(chunks, 'reduction')
 
 
 def test_s1_spo():
-    deps = prepare_deps(s1)
-    chunks = prepare_chunks(s1)
-    # chunks = nlp.chunk(s1)
+    deps = nlp.prepare_deps(s1)
+    chunks = nlp.prepare_chunks(s1)
     trigger = 'leads to'
     s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
     assert s_head == 'encapsulation'
@@ -77,9 +76,8 @@ def test_s1_spo():
 
 
 def test_s2_spo():
-    deps = prepare_deps(s2)
-    chunks = prepare_chunks(s2)
-    # chunks = nlp.chunk(s2)
+    deps = nlp.prepare_deps(s2)
+    chunks = nlp.prepare_chunks(s2)
     trigger = 'causes'
     s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
     assert s_head == 'virus'
@@ -90,9 +88,8 @@ def test_s2_spo():
 
 
 def test_s3_spo():
-    deps = prepare_deps(s3)
-    chunks = prepare_chunks(s3)
-    # chunks = nlp.chunk(s3)
+    deps = nlp.prepare_deps(s3)
+    chunks = nlp.prepare_chunks(s3)
     print(chunks)
     trigger = 'cause'
     s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
@@ -104,8 +101,8 @@ def test_s3_spo():
 
 
 def test_s4_spo():
-    deps = prepare_deps(s4)
-    chunks = prepare_chunks(s4)
+    deps = nlp.prepare_deps(s4)
+    chunks = nlp.prepare_chunks(s4)
     trigger = 'inhibit'
     s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
     assert s_head == 'ribavirin'
@@ -116,8 +113,8 @@ def test_s4_spo():
 
 
 def test_s5_spo():
-    deps = prepare_deps(s5)
-    chunks = prepare_chunks(s5)
+    deps = nlp.prepare_deps(s5)
+    chunks = nlp.prepare_chunks(s5)
     trigger = 'cause of'
     s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
     assert s_head == 'infection'
@@ -141,4 +138,5 @@ def test_coordinating_conjunction():
 
 
 if __name__ == '__main__':
-    extract_SPOs(text)
+    pass
+    # extract_SPOs(text)

@@ -2,7 +2,7 @@ import argparse
 import csv
 from spo.data_reader import DataReader
 from spo.stanzanlp import StanzaNLP
-from spo.extract import get_dependencies, get_fired_trigger, get_sentence, extract_spo, get_coordinated_nps
+from spo.extract import get_fired_trigger, get_sentence, extract_spo, get_coordinated_nps
 
 
 def main():
@@ -32,9 +32,9 @@ def main():
                 if not trigger:
                     continue
 
-                deps = get_dependencies(sentence)
+                deps = StanzaNLP.get_dependencies(sentence)
                 # chunking
-                chunks = nlp.chunk(sent)
+                chunks = nlp.prepare_chunks(sent)
                 s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
                 ss = get_coordinated_nps(s)
                 os = get_coordinated_nps(o)
