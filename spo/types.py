@@ -7,13 +7,16 @@ class Chunk(NamedTuple):
     match: str
 
 
-class Dependancy(NamedTuple):
-    pass
+class Dep(NamedTuple):
+    target_text: str
+    source_id: int
+    deprel: str
+    source_text: str
 
 
 class Sentence(NamedTuple):
     chunks: List[Chunk]
-    deps: List[Dependancy]
+    deps: List[Dep]
 
 
 class Document(NamedTuple):

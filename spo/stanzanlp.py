@@ -2,7 +2,7 @@ import stanza
 from stanza.server import CoreNLPClient
 from spo.nlp import NLP
 from typing import List
-from spo.types import Chunk
+from spo.types import Chunk, Dep
 
 stanza.download('en')
 
@@ -48,18 +48,25 @@ class StanzaNLP(NLP):
             chunks.append(chunk)
         return chunks
 
-    def prepare_deps(self, s: str):
+    def prepare_deps(self, s: str) -> List[Dep]:
         ann = self.process(s)
         sent = ann.sentences[0]
         deps = StanzaNLP.get_dependencies(sent)
         return deps
 
     @staticmethod
-    def get_dependencies(s) -> List:
-        deps = []
+    def get_dependencies(s) -> List[Dep]:
+        old_deps = []
         for dep_edge in s.dependencies:
             # target text, source id, edge, source text
-            deps.append((dep_edge[2].text, dep_edge[0].id, dep_edge[1], dep_edge[0].text))
+            old_deps.append((dep_edge[2].text, dep_edge[0].id, dep_edge[1], dep_edge[0].text))
+
+        deps = []
+        for old_dep in old_deps:
+            target_text, source_id, deprel, source_text = old_dep
+            dep = Dep(target_text=target_text, source_id=source_id, deprel=deprel, source_text=source_text)
+            deps.append(dep)
+
         return deps
 
     @staticmethod

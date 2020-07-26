@@ -1,6 +1,6 @@
 import spo.config as config
 from spo.stanzanlp import StanzaNLP
-from spo.types import Chunk
+from spo.types import Chunk, Dep
 from typing import List, Optional
 import re
 
@@ -17,20 +17,21 @@ def get_fired_trigger(sentence: str) -> Optional[str]:
     return None
 
 
-def get_trigger_dep(deps: List, trigger: str):
+def get_trigger_dep(deps: List[Dep], trigger: str):
     """
     Given a trigger, fetch trigger info: trigger id, edge, source_text (possible head)
     :param deps:
     :param trigger:
     :return:
     """
-    for i, (target_text, source_id, deprel, source_text) in enumerate(deps):
-        if trigger == target_text:
-            return i + 1, deprel, source_text
+    # for i, (target_text, source_id, deprel, source_text) in enumerate(deps):
+    for i, dep in enumerate(deps):
+        if trigger == dep.target_text:
+            return i + 1, dep.deprel, dep.source_text
     return None, None, None  # not matched.
 
 
-def get_s_head(deps: List, pos: int, edge, source_text) -> str:
+def get_s_head(deps: List[Dep], pos: int, edge, source_text) -> str:
     """
     Given dependencies and a trigger info, return a head word of a subject.
     :param deps:
@@ -51,16 +52,17 @@ def get_s_head(deps: List, pos: int, edge, source_text) -> str:
         pass
 
     # looking for a dependent of the trigger
-    for target_text, source_id, edge, _ in deps:
-        if int(source_id) == pos and edge in config.s_dp_list:
-            return target_text
+    # for target_text, source_id, deprel, _ in deps:
+    for dep in deps:
+        if int(dep.source_id) == pos and dep.deprel in config.s_dp_list:
+            return dep.target_text
     return ''
 
 
-def get_o_head(deps: List, pos: int, edge, source_text) -> str:
-    for target_text, source_id, edge, _ in deps:
-        if int(source_id) == pos and edge in config.o_dp_list:
-            return target_text
+def get_o_head(deps: List[Dep], pos: int, edge, source_text) -> str:
+    for dep in deps:
+        if int(dep.source_id) == pos and dep.deprel in config.o_dp_list:
+            return dep.target_text
     return ''
 
 
@@ -102,7 +104,7 @@ def get_coordinated_nps(chunk: str) -> List[str]:
     return nps
 
 
-def extract_spo(deps, chunks: List[Chunk], trigger: str):
+def extract_spo(deps: List[Dep], chunks: List[Chunk], trigger: str):
     trigger2 = trigger.split(" ")[0]
     p, edge, source = get_trigger_dep(deps, trigger2)
     s_head = get_s_head(deps, p, edge, source)
@@ -111,26 +113,3 @@ def extract_spo(deps, chunks: List[Chunk], trigger: str):
     o_np = get_longest_np(chunks, o_head)
     return s_head, s_np, trigger, o_head, o_np
 
-
-#def extract_SPOs(text: str):
-#      doc = nlp.process(text)
-#      for sentence in list(doc.sentences):
-#          sent = get_sentence(sentence.words)
-#          trigger = get_fired_trigger(sent)
-#
-#          if not trigger:
-#              continue
-#
-#          deps = get_dependencies(sentence)
-#          # chunking
-#          chunks = nlp.chunk(sent)
-#          s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
-#          ss = get_coordinated_nps(s)
-#          os = get_coordinated_nps(o)
-#
-#          for s in ss:
-#              for o in os:
-#                  row = [sent, s, p, o]
-#                  if all(row):
-#                      print('\t'.join(row))
-#

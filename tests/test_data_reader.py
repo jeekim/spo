@@ -2,11 +2,10 @@ from spo.data_reader import DataReader
 import os
 
 dr = DataReader(os.environ['DATA_DIR'])
-it = dr.get_reader()
+it = iter(dr)
 
 
 def test_num_files():
-    # assert 'Quantum annealing is an innova' == next(dr.next())[:30]
     pmcid, title, abstract = next(it)
     assert '6954224' == pmcid
     assert 'Enhancing quantum annealing performance by a degenerate two-level system' == title

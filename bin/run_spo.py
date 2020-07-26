@@ -17,33 +17,39 @@ def main():
     args = parser.parse_args()
 
     dr = DataReader(args.input_dir)
-    it = dr.get_reader()
+    it = iter(dr)
     nlp = StanzaNLP()
 
     with open(args.output_file, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter='\t')
 
-        for pmcid, title, abstract in list(it):
-            doc = nlp.process(abstract)
-            for sentence in list(doc.sentences):
-                sent = StanzaNLP.get_sentence(sentence.words)
-                trigger = get_fired_trigger(sent)
+        while True:
+            try:
+                pmcid, title, abstract = next(it)
+            # TODO just sentence splitter?
+            except StopIteration:
+                break
+            else:
+                doc = nlp.process(abstract)
+                for sentence in list(doc.sentences):
+                    sent = StanzaNLP.get_sentence(sentence.words)
+                    trigger = get_fired_trigger(sent)
 
-                if not trigger:
-                    continue
+                    if not trigger:
+                        continue
 
-                deps = StanzaNLP.get_dependencies(sentence)
-                # chunking
-                chunks = nlp.prepare_chunks(sent)
-                s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
-                ss = get_coordinated_nps(s)
-                os = get_coordinated_nps(o)
+                    deps = StanzaNLP.get_dependencies(sentence)
+                    # chunking
+                    chunks = nlp.prepare_chunks(sent)
+                    s_head, s, p, o_head, o = extract_spo(deps, chunks, trigger)
+                    ss = get_coordinated_nps(s)
+                    os = get_coordinated_nps(o)
 
-                for s in ss:
-                    for o in os:
-                        row = [title, pmcid, f'PMC{pmcid}.nxml', s, p, o, sent]
-                        if all(row):
-                            writer.writerow(row)
+                    for s in ss:
+                        for o in os:
+                            row = [title, pmcid, f'PMC{pmcid}.nxml', s, p, o, sent]
+                            if all(row):
+                                writer.writerow(row)
 
 
 if __name__ == '__main__':
