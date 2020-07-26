@@ -2,6 +2,7 @@ import stanza
 from stanza.server import CoreNLPClient
 from spo.nlp import NLP
 from typing import List
+from spo.types import Chunk
 
 stanza.download('en')
 
@@ -36,9 +37,15 @@ class StanzaNLP(NLP):
         # return chunks
         return ann
 
-    def prepare_chunks(self, s: str):
+    def prepare_chunks(self, s: str) -> List[Chunk]:
+        chunks = []
         ann = self.chunk(s)
-        chunks = ann['sentences'][0]  # first sentence
+        old_chunks = ann['sentences'][0]  # first sentence
+        for i in range(len(old_chunks)):
+            span = old_chunks[str(i)]['spanString']
+            match = old_chunks[str(i)]['match']
+            chunk = Chunk(position=i, spanString=span, match=match)
+            chunks.append(chunk)
         return chunks
 
     def prepare_deps(self, s: str):

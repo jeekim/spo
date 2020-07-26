@@ -1,5 +1,6 @@
 import spo.config as config
 from spo.stanzanlp import StanzaNLP
+from spo.types import Chunk
 from typing import List, Optional
 import re
 
@@ -83,11 +84,11 @@ def is_np_head(match, head) -> bool:
         return False
 
 
-def get_longest_np(chunks, head: str) -> str:
+def get_longest_np(chunks: List[Chunk], head: str) -> str:
     longest_np = ''
-    for i in range(len(chunks)):
-        np = chunks[str(i)]['spanString']
-        match = chunks[str(i)]['match']
+    for chunk in chunks:
+        np = chunk.spanString
+        match = chunk.match
         match = re.sub(r"\s+", " ", match, flags=re.UNICODE)
         match = match.strip()
         if is_np_head(match, head) and len(np) > len(longest_np):
@@ -101,7 +102,7 @@ def get_coordinated_nps(chunk: str) -> List[str]:
     return nps
 
 
-def extract_spo(deps, chunks, trigger):
+def extract_spo(deps, chunks: List[Chunk], trigger: str):
     trigger2 = trigger.split(" ")[0]
     p, edge, source = get_trigger_dep(deps, trigger2)
     s_head = get_s_head(deps, p, edge, source)

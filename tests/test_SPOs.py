@@ -54,7 +54,7 @@ def test_s1_o_head():
 
 def test_s1_chunks():
     chunks = nlp.prepare_chunks(s1)
-    assert 'The encapsulation of rifampicin' == chunks['0']['spanString']
+    assert 'The encapsulation of rifampicin' == chunks[0].spanString
 
 
 def test_s1_np():

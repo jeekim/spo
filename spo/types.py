@@ -2,7 +2,9 @@ from typing import NamedTuple, List
 
 
 class Chunk(NamedTuple):
-    pass
+    position: int
+    spanString: str
+    match: str
 
 
 class Dependancy(NamedTuple):
