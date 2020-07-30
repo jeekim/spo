@@ -14,8 +14,10 @@ class StanzaNLP(NLP):
     # stanza.download('en')  # download English model
     def __init__(self):
         self.nlp = stanza.Pipeline('en')  # initialize English neural pipeline
-        self.client = CoreNLPClient(annotators=['tokenize', 'ssplit', 'pos', 'lemma', 'parse'],
-                                    timeout=60000, memory='4G', endpoint='http://localhost:9001')
+        self.client = CoreNLPClient(
+            annotators=['tokenize', 'ssplit', 'pos', 'lemma', 'parse'],
+            timeout=60000, memory='4G', endpoint='http://localhost:9001'
+        )
 
     def process(self, doc: str):
         """
@@ -28,7 +30,7 @@ class StanzaNLP(NLP):
 
     def chunk(self, doc: str):
         """
-        Given a doc, outputs a list of chunks based on phrase structure grammar.
+        Given a doc, outputs a list of chunks based on phrase structure grammar
         :param sentence:
         :return:
         """
@@ -64,7 +66,12 @@ class StanzaNLP(NLP):
         deps = []
         for old_dep in old_deps:
             target_text, source_id, deprel, source_text = old_dep
-            dep = Dep(target_text=target_text, source_id=source_id, deprel=deprel, source_text=source_text)
+            dep = Dep(
+                target_text=target_text,
+                source_id=source_id,
+                deprel=deprel,
+                source_text=source_text
+            )
             deps.append(dep)
 
         return deps
@@ -75,4 +82,3 @@ class StanzaNLP(NLP):
         for w in words:
             s.append(w.text)
         return " ".join(s)
-

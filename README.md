@@ -59,10 +59,10 @@ python -c 'import stanza; stanza.download("en")'
 * How to run tests?
 ```bash
 cd /path/to/project-directory
-PYTHONPATH=. pytest tests/test_SPOs.py
+pytest tests/test_SPOs.py
 
 export DATA_DIR="$(pwd)/data/tests"
-PYTHONPATH=. pytest tests/test_data_reader.py
+pytest tests/test_data_reader.py
 ```
 
 * How to get SPOs for example sentences

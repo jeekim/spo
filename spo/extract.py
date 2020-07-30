@@ -1,5 +1,4 @@
 import spo.config as config
-from spo.stanzanlp import StanzaNLP
 from spo.types import Chunk, Dep
 from typing import List, Optional
 import re
