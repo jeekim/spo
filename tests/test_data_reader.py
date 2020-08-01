@@ -1,6 +1,7 @@
 from spo.data_reader import DataReader
 import os
 
+os.environ['DATA_DIR']='./data/tests'
 dr = DataReader(os.environ['DATA_DIR'])
 it = iter(dr)
 

@@ -12,11 +12,11 @@ class StanzaNLP(NLP):
     class for NLP processor
     """
     # stanza.download('en')  # download English model
-    def __init__(self):
+    def __init__(self, port=9001):
         self.nlp = stanza.Pipeline('en')  # initialize English neural pipeline
         self.client = CoreNLPClient(
             annotators=['tokenize', 'ssplit', 'pos', 'lemma', 'parse'],
-            timeout=60000, memory='4G', endpoint='http://localhost:9001'
+            timeout=60000, memory='4G', endpoint=f'http://localhost:{port}'
         )
 
     def process(self, doc: str):

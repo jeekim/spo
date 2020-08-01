@@ -1,6 +1,10 @@
 from spo.extract import get_fired_trigger, get_trigger_dep, get_s_head, get_o_head, get_longest_np,\
     extract_spo, get_coordinated_nps
-from spo.stanzanlp import StanzaNLP 
+from spo.stanzanlp import StanzaNLP
+import os
+
+os.environ['CORENLP_HOME'] = './model/stanford-corenlp-4.0.0'
+
 
 nlp = StanzaNLP()
 
