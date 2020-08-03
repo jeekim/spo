@@ -10,6 +10,7 @@ def tests(session):
         env={
             # "DATA_DIR": "$(pwd)/data/tests",
             # "CORENLP_HOME": "$(pwd)/model/stanford-corenlp-4.0.0"
+            # "CORENLP_HOME": "$(pwd)/model/stanford-corenlp-4.0.0"
         }
     )
 
