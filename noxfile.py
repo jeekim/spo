@@ -13,4 +13,3 @@ def tests(session):
             # "CORENLP_HOME": "$(pwd)/model/stanford-corenlp-4.0.0"
         }
     )
-
