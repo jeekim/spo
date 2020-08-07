@@ -8,6 +8,8 @@ class Chunk(NamedTuple):
 
 
 class Dep(NamedTuple):
+    """
+    """
     target_text: str
     source_id: int
     deprel: str
