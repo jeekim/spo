@@ -1,5 +1,5 @@
 import spo.config as config
-from spo.types import Chunk, Dep
+from spo.types import Chunk, Edge
 from typing import List, Optional
 import re
 
@@ -16,7 +16,7 @@ def get_fired_trigger(sentence: str) -> Optional[str]:
     return None
 
 
-def get_trigger_dep(deps: List[Dep], trigger: str):
+def get_trigger_dep(deps: List[Edge], trigger: str):
     """
     Given a trigger, fetch trigger info: trigger id, edge, source_text (possible head)
     :param deps:
@@ -30,7 +30,7 @@ def get_trigger_dep(deps: List[Dep], trigger: str):
     return None, None, None  # not matched.
 
 
-def get_s_head(deps: List[Dep], pos: int, edge, source_text) -> str:
+def get_s_head(deps: List[Edge], pos: int, edge, source_text) -> str:
     """
     Given dependencies and a trigger info, return a head word of a subject.
     :param deps:
@@ -58,7 +58,7 @@ def get_s_head(deps: List[Dep], pos: int, edge, source_text) -> str:
     return ''
 
 
-def get_o_head(deps: List[Dep], pos: int, edge, source_text) -> str:
+def get_o_head(deps: List[Edge], pos: int, edge, source_text) -> str:
     for dep in deps:
         if int(dep.source_id) == pos and dep.deprel in config.o_dp_list:
             return dep.target_text
@@ -103,7 +103,7 @@ def get_coordinated_nps(chunk: str) -> List[str]:
     return nps
 
 
-def extract_spo(deps: List[Dep], chunks: List[Chunk], trigger: str):
+def extract_spo(deps: List[Edge], chunks: List[Chunk], trigger: str):
     trigger2 = trigger.split(" ")[0]
     p, edge, source = get_trigger_dep(deps, trigger2)
     s_head = get_s_head(deps, p, edge, source)

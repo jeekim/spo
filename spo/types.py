@@ -9,7 +9,7 @@ class Chunk(NamedTuple):
     match: str
 
 
-class Dep(NamedTuple):
+class Edge(NamedTuple):
     """
     """
     target_text: str
@@ -20,7 +20,7 @@ class Dep(NamedTuple):
 
 class Sentence(NamedTuple):
     chunks: List[Chunk]
-    deps: List[Dep]
+    deps: List[Edge]
 
 
 class Document(NamedTuple):
