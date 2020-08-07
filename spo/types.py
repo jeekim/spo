@@ -2,6 +2,8 @@ from typing import NamedTuple, List
 
 
 class Chunk(NamedTuple):
+    """
+    """
     position: int
     spanString: str
     match: str
