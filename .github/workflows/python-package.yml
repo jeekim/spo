@@ -38,4 +38,4 @@ jobs:
       run: |
         # export CORENLP_HOME=$(pwd)/model/stanford-corenlp-4.0.0
         # export DATA_DIR=$(pwd)/data/tests
-        PYTHONPATH=. pytest
+        PYTHONPATH=. pytest ./tests/test_data_reader.py
