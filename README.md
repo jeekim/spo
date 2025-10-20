@@ -15,15 +15,25 @@ A dependency parsing-based tool for extracting Subject-Predicate-Object (SPO) tr
 
 ## Overview
 
-This tool extracts structured SPO (Subject-Predicate-Object) relationships from natural language sentences, particularly useful for biomedical text mining. It uses dependency parsing patterns and noun phrase chunking to identify semantic relationships between entities.
+This tool provides a robust solution for extracting Subject-Predicate-Object (SPO) triples from biomedical text, leveraging the power of dependency parsing to identify and structure complex relationships. By analyzing grammatical dependencies, this extractor identifies the syntactic head of a trigger word and extracts the corresponding noun phrases (NPs) for the subject and object, enabling automated knowledge extraction from unstructured text.
+
+The core of this tool is its ability to process sentences based on a predefined list of trigger words. When a trigger is detected, it initiates a dependency parsing and chunking process using Stanza's neural pipeline and Stanford CoreNLP's Tregex. This allows the system to handle a wide range of grammatical structures, including passive voice, coordinating conjunctions, and relative clauses, making it highly effective for the nuances of biomedical literature.
+
+## Getting Started
+
+This guide will walk you through the essential steps to get the SPO Extractor up and running. For more detailed instructions, please refer to the corresponding sections in this document.
+
+1. **Prerequisites**: Ensure you have Python 3.x, Stanford CoreNLP, and the Stanza library with English models installed.
+2. **Environment Setup**: Set the `CORENLP_HOME` and `DATA_DIR` environment variables to point to your CoreNLP installation and data directories.
+3. **Run the Extractor**: Use the provided command-line interface to process your input files and generate the extracted SPO triples.
 
 ## Features
 
-- Trigger-based extraction with dependency parsing
-- Neural pipeline for accurate dependency analysis
-- Support for complex grammatical structures (passive voice, coordinating conjunctions, relative clauses)
-- Integration with Stanford CoreNLP's Tregex for chunking
-- Stanza's neural models for dependency parsing
+- **Trigger-Based Extraction**: Initiates the extraction process upon detecting predefined trigger words, ensuring high relevance and precision.
+- **Advanced Dependency Parsing**: Utilizes Stanza's neural models for accurate dependency analysis, forming the backbone of the SPO extraction logic.
+- **Complex Grammatical Support**: Handles a variety of complex sentence structures, including passive voice, coordinating conjunctions, and relative clauses.
+- **Noun Phrase Chunking**: Integrates with Stanford CoreNLP's Tregex to accurately identify and extract noun phrases.
+- **Biomedical Focus**: Optimized for biomedical text, making it a valuable tool for researchers and practitioners in the field.
 
 ## Requirements
 
@@ -33,50 +43,48 @@ This tool extracts structured SPO (Subject-Predicate-Object) relationships from 
 
 ## Installation
 
-### 1. Download Stanford CoreNLP
+To get started with the SPO Extractor, follow these steps:
 
-Download and extract the following:
-- [Stanford CoreNLP](http://nlp.stanford.edu/software/stanford-corenlp-latest.zip)
-- [English models](http://nlp.stanford.edu/software/stanford-corenlp-4.0.0-models-english.jar)
+### Quick Start
 
-Place the model JAR files in the CoreNLP distribution folder.
-
-### 2. Set Environment Variables
+For a streamlined setup, you can use the following commands to configure your environment.
 
 ```bash
+# Set the CORENLP_HOME variable to your Stanford CoreNLP installation
 export CORENLP_HOME=/path/to/stanford-corenlp-full-2020-04-20
+
+# Set the DATA_DIR variable to your data directory
 export DATA_DIR=/path/to/data/
-```
 
-### 3. Install Python Dependencies
-
-```bash
+# Install the required Python packages
 pip install -r requirements.txt
-```
 
-### 4. Download Stanza English Model
-
-```bash
+# Download the Stanza English model
 python -c 'import stanza; stanza.download("en")'
 ```
 
+### Detailed Steps
+
+1. **Download Stanford CoreNLP**: Download and extract the latest version of [Stanford CoreNLP](http://nlp.stanford.edu/software/stanford-corenlp-latest.zip) and the [English models](http://nlp.stanford.edu/software/stanford-corenlp-4.0.0-models-english.jar).
+
+2. **Configure Environment**: Set the `CORENLP_HOME` environment variable to point to your Stanford CoreNLP installation directory. Additionally, define the `DATA_DIR` variable to specify the location of your input data.
+
+3. **Install Dependencies**: Install the required Python packages using the `requirements.txt` file.
+
+4. **Download Stanza Model**: Download the Stanza English model, which is necessary for the dependency parsing functionality.
+
 ## Usage
 
-### Extract SPO from Input Directory
+To extract SPO triples from your text files, run the following command:
 
 ```bash
-PYTHONPATH=. python bin/run_spo.py -i input_directory -o output_file
+PYTHONPATH=. python bin/run_spo.py --input <input_directory> --output <output_file>
 ```
 
-**Parameters:**
-- `-i, --input`: Directory containing input text files
-- `-o, --output`: Output file for extracted SPO triples
+### Parameters
 
-### Test with Example Sentences
-
-```bash
-PYTHONPATH=. python tests/test_SPOs.py
-```
+- `--input`: Specifies the directory containing the input text files for processing.
+- `--output`: Defines the path for the output file where the extracted SPO triples will be saved.
 
 ## Example Sentences and Universal Dependencies
 
@@ -110,46 +118,47 @@ The extractor handles various dependency patterns including:
 - **nsubj:pass => xcomp => VERB => obj**: Passive voice constructions
 - **nsubj => NOUN => nmod => conj**: Coordinating conjunctions
 
-## What is Stanza?
+## How it Works
 
-Stanza is a Python wrapper that combines Stanford CoreNLP and PyTorch-based NLP models:
-- [Tregex](https://nlp.stanford.edu/software/tregex.html) for noun phrase chunking
-- Neural pipeline for dependency parsing
+The SPO Extractor operates through a series of steps designed to identify and extract structured information from unstructured text.
 
-## Algorithm
-
-The extraction process follows these steps:
-
-1. **Input Processing**: Accept a sentence and a list of trigger words
-2. **Trigger Detection**: Check if any trigger word appears in the sentence
-3. **Parsing**: If triggered, run dependency parser and chunker on the sentence
-4. **Head Word Identification**: Use dependency relations from the trigger to identify syntactic head words
-5. **NP Extraction**: Extract noun phrases by merging dependency relations and chunks based on head words
+1. **Input Processing**: The system takes a sentence and a predefined list of trigger words as input.
+2. **Trigger Detection**: It scans the sentence to determine if any of the trigger words are present.
+3. **Dependency Parsing**: If a trigger is found, the tool initiates a dependency parser and chunker to analyze the grammatical structure of the sentence.
+4. **Head Word Identification**: By examining the dependency relations, the extractor identifies the syntactic head of the trigger word.
+5. **Noun Phrase Extraction**: Finally, it extracts the relevant noun phrases by merging the dependency relations and chunks corresponding to the subject and object.
 
 ## Testing
 
-### Run All Tests
+To ensure the reliability and accuracy of the SPO Extractor, a suite of tests is provided.
+
+### Running All Tests
+
+To execute all tests, navigate to the project directory and run:
 
 ```bash
-cd /path/to/project-directory
-pytest tests/test_SPOs.py
+pytest tests/
 ```
 
-### Run Data Reader Tests
+### Running Specific Tests
 
-```bash
-export DATA_DIR="$(pwd)/data/tests"
-pytest tests/test_data_reader.py
-```
+For more targeted testing, you can run individual test files.
 
-### Test with Example Sentences
+- **SPO Tests**: To test the core SPO extraction functionality, run:
+  ```bash
+  pytest tests/test_SPOs.py
+  ```
 
-```bash
-PYTHONPATH=. python tests/test_SPOs.py
-```
+- **Data Reader Tests**: To validate the data reading and processing modules, execute:
+  ```bash
+  export DATA_DIR="$(pwd)/data/tests"
+  pytest tests/test_data_reader.py
+  ```
 
 ## Future Enhancements
 
-- **Biomedical NER Integration**: Biomedical Named Entity Recognizers can improve NP chunking and identify semantic roles of noun phrases
-- **Entity Type Classification**: Distinguish between different types of biomedical entities (diseases, drugs, proteins, etc.)
-- **Relation Classification**: Categorize extracted relationships by type (causation, association, treatment, etc.)
+To further improve the capabilities of the SPO Extractor, the following enhancements are planned:
+
+- **Biomedical NER Integration**: Incorporating Biomedical Named Entity Recognizers to enhance the accuracy of noun phrase chunking and identify the semantic roles of extracted entities.
+- **Entity Type Classification**: Implementing a classification system to distinguish between different types of biomedical entities, such as diseases, drugs, and proteins.
+- **Relation Classification**: Developing a model to categorize the extracted relationships into predefined types, including causation, association, and treatment.
